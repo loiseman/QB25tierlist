@@ -1,5 +1,5 @@
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '../../../lib/prisma';
 
 // .5 va vers le meilleur tier (3.5 -> 3)
 function roundHalfDown(x:number){ const f=Math.floor(x), d=x-f; return Math.abs(d-0.5)<1e-9 ? f : (d<0.5?f:f+1); }
