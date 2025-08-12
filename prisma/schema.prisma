@@ -1,6 +1,11 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
-generator client { provider = "prisma-client-js" }
+generator client {
+  provider = "prisma-client-js"
+}
 
 model QB {
   id     String        @id @default(cuid())
@@ -8,6 +13,7 @@ model QB {
   team   String
   active Boolean       @default(true)
   items  BallotItem[]
+
   @@unique([name, team], name: "name_team")
 }
 
@@ -23,9 +29,10 @@ model BallotItem {
   ballotId String
   qbId     String
   tier     Int
+
   ballot   Ballot  @relation(fields: [ballotId], references: [id], onDelete: Cascade)
   qb       QB      @relation(fields: [qbId], references: [id], onDelete: Cascade)
 
   @@unique([ballotId, qbId])
-  @@check(tier >= 1 && tier <= 5)
+  // (si tu veux un check SQL, on le fera via migration SQL plutôt que @@check pour éviter toute incompatibilité de version)
 }
