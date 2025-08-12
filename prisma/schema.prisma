@@ -1,0 +1,31 @@
+
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+generator client { provider = "prisma-client-js" }
+
+model QB {
+  id     String        @id @default(cuid())
+  name   String
+  team   String
+  active Boolean       @default(true)
+  items  BallotItem[]
+  @@unique([name, team], name: "name_team")
+}
+
+model Ballot {
+  id        String       @id @default(cuid())
+  voterName String
+  createdAt DateTime     @default(now())
+  items     BallotItem[]
+}
+
+model BallotItem {
+  id       String  @id @default(cuid())
+  ballotId String
+  qbId     String
+  tier     Int
+  ballot   Ballot  @relation(fields: [ballotId], references: [id], onDelete: Cascade)
+  qb       QB      @relation(fields: [qbId], references: [id], onDelete: Cascade)
+
+  @@unique([ballotId, qbId])
+  @@check(tier >= 1 && tier <= 5)
+}
